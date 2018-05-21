@@ -1,12 +1,12 @@
 package me.philio.pinentry.demo;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 import me.philio.pinentry.PinEntryView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     private PinEntryView pinEntryView;
 
