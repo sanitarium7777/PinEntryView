@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            app:showKeyboard="false"
             app:accentType="all"
             app:digitBackground="@android:color/white"
             app:digitElevation="10dp" />

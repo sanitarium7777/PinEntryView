@@ -100,6 +100,8 @@ public class PinEntryView extends ViewGroup {
      */
     private OnPinEnteredListener onPinEnteredListener;
 
+    private boolean showKeyboard;
+
     /**
      * If set to false, will always draw accent color if type is CHARACTER or ALL
      * If set to true, will draw accent color only when focussed.
@@ -168,6 +170,8 @@ public class PinEntryView extends ViewGroup {
             mask = maskCharacter;
         }
 
+        showKeyboard = array.getBoolean(R.styleable.PinEntryView_showKeyboard, true);
+
         // Accent shown, default to only when focused
         accentRequiresFocus = array.getBoolean(R.styleable.PinEntryView_accentRequiresFocus, true);
 
@@ -214,7 +218,7 @@ public class PinEntryView extends ViewGroup {
     }
 
     @Override public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && showKeyboard) {
             // Make sure this view is focused
             editText.requestFocus();
 
@@ -222,6 +226,7 @@ public class PinEntryView extends ViewGroup {
             InputMethodManager inputMethodManager = (InputMethodManager) getContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.showSoftInput(editText, 0);
+
             return true;
         }
         return super.onTouchEvent(event);
@@ -396,25 +401,34 @@ public class PinEntryView extends ViewGroup {
         editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(digits)});
         editText.setInputType(inputType);
         editText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-        editText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override public void onFocusChange(View v, boolean hasFocus) {
-                // Update the selected state of the views
-                int length = editText.getText().length();
-                for (int i = 0; i < digits; i++) {
-                    getChildAt(i).setSelected(hasFocus && (accentType == ACCENT_ALL ||
-                            (accentType == ACCENT_CHARACTER && (i == length ||
-                                    (i == digits - 1 && length == digits)))));
-                }
 
-                // Make sure the cursor is at the end
-                editText.setSelection(length);
+        if(showKeyboard){
+            editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+                @Override public void onFocusChange(View v, boolean hasFocus) {
+                    // Update the selected state of the views
+                    int length = editText.getText().length();
+                    for (int i = 0; i < digits; i++) {
+                        getChildAt(i).setSelected(hasFocus && (accentType == ACCENT_ALL ||
+                                (accentType == ACCENT_CHARACTER && (i == length ||
+                                        (i == digits - 1 && length == digits)))));
+                    }
 
-                // Provide focus change events to any listener
-                if (onFocusChangeListener != null) {
-                    onFocusChangeListener.onFocusChange(PinEntryView.this, hasFocus);
+                    // Make sure the cursor is at the end
+                    editText.setSelection(length);
+
+                    // Provide focus change events to any listener
+                    if (onFocusChangeListener != null) {
+                        onFocusChangeListener.onFocusChange(PinEntryView.this, hasFocus);
+                    }
                 }
+            });
+        }
+        else{
+            for (int i = 0; i < digits; i++) {
+                getChildAt(i).setSelected(accentType == ACCENT_ALL);
             }
-        });
+        }
+
         editText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
