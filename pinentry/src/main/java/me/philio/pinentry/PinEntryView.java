@@ -51,6 +51,7 @@ public class PinEntryView extends ViewGroup {
     public static final int ACCENT_NONE = 0;
     public static final int ACCENT_ALL = 1;
     public static final int ACCENT_CHARACTER = 2;
+    public static final int ACCENT_FINISHED = 3;
 
     /**
      * Number of digits
@@ -449,7 +450,8 @@ public class PinEntryView extends ViewGroup {
                     if (editText.hasFocus()) {
                         getChildAt(i).setSelected(accentType == ACCENT_ALL ||
                                 (accentType == ACCENT_CHARACTER && (i == length ||
-                                        (i == digits - 1 && length == digits))));
+                                        (i == digits - 1 && length == digits))) ||
+                                (accentType == ACCENT_FINISHED && s.length() > i ));
                     }
                 }
 
@@ -517,8 +519,9 @@ public class PinEntryView extends ViewGroup {
 
             // Setup paint to keep onDraw as lean as possible
             paint = new Paint();
-            paint.setStyle(Paint.Style.FILL);
+            paint.setStyle(Paint.Style.STROKE);
             paint.setColor(accentColor);
+            paint.setStrokeWidth(accentWidth);
         }
 
         @Override protected void onDraw(Canvas canvas) {
@@ -526,7 +529,7 @@ public class PinEntryView extends ViewGroup {
 
             // If selected draw the accent
             if (isSelected() || !accentRequiresFocus) {
-                canvas.drawRect(0, getHeight() - accentWidth, getWidth(), getHeight(), paint);
+                canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
             }
         }
 

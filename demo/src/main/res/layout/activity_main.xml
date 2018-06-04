@@ -20,20 +20,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:showKeyboard="false"
-            app:accentType="all"
-            app:digitBackground="@android:color/white"
-            app:digitElevation="10dp" />
+            app:accentType="finished"
+            app:pinAccentColor="@color/colorPrimaryDark"
+            app:digitBackground="@drawable/background_border" />
 
         <me.philio.pinentry.PinEntryView
             android:id="@+id/pin_entry_border"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            app:showKeyboard="false"
             app:accentType="character"
+            app:numDigits="6"
             app:digitBackground="@drawable/background_border"
             app:digitTextSize="11sp"
-            app:mask=""
             app:pinInputType="text" />
 
         <me.philio.pinentry.PinEntryView
