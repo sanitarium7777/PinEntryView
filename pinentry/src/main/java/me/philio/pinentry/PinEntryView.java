@@ -21,8 +21,11 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -375,6 +378,31 @@ public class PinEntryView extends ViewGroup {
         return accentRequiresFocus;
     }
 
+    public void splash(int color, long delayMillis, @Nullable final OnSplashListener listener){
+        final int original = this.getAccentColor();
+
+        for (int i = 0; i < digits; i++) {
+            DigitView digitView = (DigitView)getChildAt(i);
+            digitView.setSelected(true);
+            digitView.setAccentColor(color);
+            digitView.invalidate();
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                for (int i = 0; i < digits; i++) {
+                    DigitView digitView = (DigitView)getChildAt(i);
+                    digitView.setSelected(false);
+                    digitView.setAccentColor(original);
+                }
+                if(listener != null) listener.onFinished();
+            }
+        }, delayMillis);
+    }
+
+
     /**
      * Create views and add them to the view group
      */
@@ -520,8 +548,12 @@ public class PinEntryView extends ViewGroup {
             // Setup paint to keep onDraw as lean as possible
             paint = new Paint();
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(accentColor);
             paint.setStrokeWidth(accentWidth);
+            setAccentColor(accentColor);
+        }
+
+        public void setAccentColor(int accentColor){
+            paint.setColor(accentColor);
         }
 
         @Override protected void onDraw(Canvas canvas) {
@@ -539,4 +571,7 @@ public class PinEntryView extends ViewGroup {
         void onPinEntered(String pin);
     }
 
+    public interface OnSplashListener {
+        void onFinished();
+    }
 }
