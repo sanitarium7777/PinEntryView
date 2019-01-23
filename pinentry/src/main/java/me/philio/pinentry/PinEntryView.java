@@ -57,6 +57,13 @@ public class PinEntryView extends ViewGroup {
     public static final int ACCENT_FINISHED = 3;
 
     /**
+     * Entry types
+     */
+    public static final int ENTRY_BORDER = 0;
+    public static final int ENTRY_CHARACTER = 1;
+
+
+    /**
      * Number of digits
      */
     private int digits;
@@ -76,6 +83,9 @@ public class PinEntryView extends ViewGroup {
     private int digitTextSize;
     private int digitTextColor;
     private int digitElevation;
+
+    private int entryType;
+    private int entryTextColor;
 
     /**
      * Accent dimensions and styles
@@ -129,6 +139,8 @@ public class PinEntryView extends ViewGroup {
         inputType = array.getInt(R.styleable.PinEntryView_pinInputType, InputType.TYPE_CLASS_NUMBER);
         accentType = array.getInt(R.styleable.PinEntryView_accentType, ACCENT_NONE);
 
+        entryType = array.getInt(R.styleable.PinEntryView_entryType, ENTRY_BORDER);
+
         // Dimensions
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         digitWidth = array.getDimensionPixelSize(R.styleable.PinEntryView_digitWidth,
@@ -160,6 +172,14 @@ public class PinEntryView extends ViewGroup {
         digitTextColor = array.getColor(R.styleable.PinEntryView_digitTextColor,
                 textColor.resourceId > 0 ? getResources().getColor(textColor.resourceId) :
                         textColor.data);
+
+
+        TypedValue textColor2 = new TypedValue();
+        theme.resolveAttribute(android.R.attr.textColorPrimary, textColor2, true);
+        entryTextColor = array.getColor(R.styleable.PinEntryView_entryTextColor,
+                textColor2.resourceId > 0 ? getResources().getColor(textColor2.resourceId) :
+                        textColor2.data);
+
 
         // Accent colour, default to android:colorAccent from theme
         TypedValue accentColor = new TypedValue();
@@ -413,7 +433,9 @@ public class PinEntryView extends ViewGroup {
             digitView.setWidth(digitWidth);
             digitView.setHeight(digitHeight);
             digitView.setBackgroundResource(digitBackground);
-            digitView.setTextColor(digitTextColor);
+            if(entryType == ENTRY_CHARACTER) digitView.setTextColor(entryTextColor);
+            else digitView.setTextColor(digitTextColor);
+
             digitView.setTextSize(TypedValue.COMPLEX_UNIT_PX, digitTextSize);
             digitView.setGravity(Gravity.CENTER);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -471,10 +493,21 @@ public class PinEntryView extends ViewGroup {
                     if (s.length() > i) {
                         String mask = PinEntryView.this.mask == null || PinEntryView.this.mask.length() == 0 ?
                                 String.valueOf(s.charAt(i)) : PinEntryView.this.mask;
+
+                        if(entryType == ENTRY_CHARACTER){
+                            ((TextView) getChildAt(i)).setTextColor(digitTextColor);
+                        }
                         ((TextView) getChildAt(i)).setText(mask);
                     } else {
-                        ((TextView) getChildAt(i)).setText("");
+                        if(entryType == ENTRY_CHARACTER) {
+                            ((TextView) getChildAt(i)).setTextColor(entryTextColor);
+//                            ((TextView) getChildAt(i)).setText(mask);
+                        }
+                        else{
+                            ((TextView) getChildAt(i)).setText("");
+                        }
                     }
+
                     if (editText.hasFocus()) {
                         getChildAt(i).setSelected(accentType == ACCENT_ALL ||
                                 (accentType == ACCENT_CHARACTER && (i == length ||
@@ -545,11 +578,18 @@ public class PinEntryView extends ViewGroup {
         public DigitView(Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
 
-            // Setup paint to keep onDraw as lean as possible
-            paint = new Paint();
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(accentWidth);
-            setAccentColor(accentColor);
+
+            if(entryType == ENTRY_CHARACTER){
+
+                this.setText(mask);
+            }else{
+                // Setup paint to keep onDraw as lean as possible
+                paint = new Paint();
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(accentWidth);
+                setAccentColor(accentColor);
+            }
+
         }
 
         public void setAccentColor(int accentColor){
@@ -559,12 +599,18 @@ public class PinEntryView extends ViewGroup {
         @Override protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            // If selected draw the accent
-            if (isSelected() || !accentRequiresFocus) {
-                canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+            if(entryType == ENTRY_CHARACTER){
+//                if (isSelected() || !accentRequiresFocus) {
+//                    this.setTextColor(entryTextColor);
+//                }
+            }
+            else{
+                // If selected draw the accent
+                if (isSelected() || !accentRequiresFocus) {
+                    canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+                }
             }
         }
-
     }
 
     public interface OnPinEnteredListener {

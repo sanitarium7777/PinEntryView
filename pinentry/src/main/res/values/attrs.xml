@@ -29,6 +29,13 @@
             <enum name="character" value="2" />
             <enum name="finished" value="3" />
         </attr>
+
+        <attr name="entryType" format="enum">
+            <enum name="border" value="0" />
+            <enum name="character" value="1" />
+        </attr>
+        <attr name="entryTextColor" format="color" />
+
         <!-- Input type -->
         <attr name="pinInputType" format="enum">
             <enum name="text" value="1" />
