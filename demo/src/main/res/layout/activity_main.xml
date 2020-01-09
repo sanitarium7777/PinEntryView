@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:accentType="finished"
-            app:digitWidth="24dp" app:digitHeight="24dp" app:digitSpacing="15dp"
+            app:digitWidth="34dp" app:digitHeight="39dp" app:digitSpacing="15dp"
             app:pinAccentColor="@color/colorPrimaryDark"
             app:digitBackground="@drawable/background_border" />
 

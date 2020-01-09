@@ -19,7 +19,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Parcel;
@@ -560,6 +562,7 @@ public class PinEntryView extends ViewGroup {
     /**
      * Custom text view that adds a coloured accent when selected
      */
+
     private class DigitView extends TextView {
 
         /**
@@ -585,13 +588,16 @@ public class PinEntryView extends ViewGroup {
             }else{
                 // Setup paint to keep onDraw as lean as possible
                 paint = new Paint();
-                paint.setStyle(Paint.Style.STROKE);
+                paint.setStyle(Paint.Style.FILL);
                 paint.setStrokeWidth(accentWidth);
                 setAccentColor(accentColor);
             }
 
         }
 
+        public float convertDpToPixel(float dp, Context context){
+            return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        }
         public void setAccentColor(int accentColor){
             paint.setColor(accentColor);
         }
@@ -607,7 +613,11 @@ public class PinEntryView extends ViewGroup {
             else{
                 // If selected draw the accent
                 if (isSelected() || !accentRequiresFocus) {
-                    canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+                    paint.setColor(Color.WHITE);
+                    canvas.drawRoundRect(new RectF(0, 0, getWidth(), getHeight()), convertDpToPixel(6, getContext()), convertDpToPixel(6, getContext()), paint);
+                    setAccentColor(accentColor);
+                    canvas.drawRoundRect(new RectF(0, 0, getWidth(), getHeight() - convertDpToPixel(3, getContext())), convertDpToPixel(6, getContext()), convertDpToPixel(6, getContext()), paint);
+
                 }
             }
         }
