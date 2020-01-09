@@ -115,6 +115,7 @@ public class PinEntryView extends ViewGroup {
      * Pin entered listener used as a callback for when all digits have been entered
      */
     private OnPinEnteredListener onPinEnteredListener;
+    private OnPinChangedListener onPinChangedListener;
 
     private boolean showKeyboard;
 
@@ -314,6 +315,10 @@ public class PinEntryView extends ViewGroup {
      */
     public void setOnPinEnteredListener(OnPinEnteredListener onPinEnteredListener) {
         this.onPinEnteredListener = onPinEnteredListener;
+    }
+
+    public void setOnPinChangedListener(OnPinChangedListener onPinChangedListener) {
+        this.onPinChangedListener = onPinChangedListener;
     }
 
     /**
@@ -521,6 +526,10 @@ public class PinEntryView extends ViewGroup {
                 if (length == digits && onPinEnteredListener != null) {
                     onPinEnteredListener.onPinEntered(s.toString());
                 }
+                if (onPinChangedListener != null) {
+                    onPinChangedListener.onPinChanged(s.toString());
+                }
+
             }
         });
         addView(editText);
@@ -625,6 +634,10 @@ public class PinEntryView extends ViewGroup {
 
     public interface OnPinEnteredListener {
         void onPinEntered(String pin);
+    }
+
+    public interface OnPinChangedListener {
+        void onPinChanged(String pin);
     }
 
     public interface OnSplashListener {

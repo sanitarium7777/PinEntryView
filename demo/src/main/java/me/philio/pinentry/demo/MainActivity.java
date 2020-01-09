@@ -31,6 +31,12 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "Pin entered: " + pin, Toast.LENGTH_LONG).show();
             }
         });
+        pinEntryView.setOnPinChangedListener(new PinEntryView.OnPinChangedListener() {
+            @Override
+            public void onPinChanged(String pin) {
+                Toast.makeText(MainActivity.this, "Pin changed: " + pin, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 }
